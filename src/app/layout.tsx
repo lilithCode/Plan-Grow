@@ -14,9 +14,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Plan & Grow",
-  description: "Plan your day with AI and grow your focus into a calm little garden.",
+  description:
+    "Plan your day with AI and grow your focus into a calm little garden.",
   icons: {
-    icon: "/icon.svg",
+    icon: [
+      {
+        url: "/icon.svg",
+        type: "image/svg+xml",
+      },
+    ],
     shortcut: "/icon.svg",
     apple: "/icon.svg",
   },

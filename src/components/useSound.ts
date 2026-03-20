@@ -19,7 +19,7 @@ export function useSound(settings: {
         window.AudioContext || (window as any).webkitAudioContext
       )();
     }
-    return ctxRef.current;
+    return ctxRef.current as AudioContext;
   };
 
   const stopAmbient = () => {

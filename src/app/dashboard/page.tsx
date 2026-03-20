@@ -16,9 +16,12 @@ import { getFallbackPlan } from "@/lib/planner";
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
   const [prompt, setPrompt] = useState("");
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<{
+    soundEnabled: boolean;
+    ambientMode: "none" | "birds" | "rain";
+  }>({
     soundEnabled: true,
-    ambientMode: "none" as const,
+    ambientMode: "none",
   });
   const [plan, setPlan] = useState<any>(null);
   const [isPlanning, setIsPlanning] = useState(false);
@@ -27,8 +30,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setMounted(true);
-    const saved = readLocalStorageJSON("pfg_plan_v2");
-    if (saved) {
+const saved = readLocalStorageJSON<any>("pfg_plan_v2");    if (saved) {
       setPlan(saved);
       setPrompt(saved.prompt || "");
     }

@@ -8,7 +8,7 @@ export default function Footer() {
           Made for focus
         </div>
         <div className="text-xs text-app-muted">
-          Tip: Always priotize your main task 🌿
+          Tip: Always prioritize your main task 🌿
         </div>
       </div>
     </footer>

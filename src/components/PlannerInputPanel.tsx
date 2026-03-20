@@ -11,7 +11,7 @@ export default function PlannerInputPanel({
   return (
     <div className="glass-panel rounded-4xl p-8 space-y-6">
       <h2 className="text-xl font-bold text-slate-700">
-        Let's plan your day <span className="text-yellow-400">✨</span>
+        Let&apos;s plan your day <span className="text-yellow-400">✨</span>
       </h2>
 
       <div className="relative">

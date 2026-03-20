@@ -6,7 +6,7 @@ export default function HeroSection() {
   return (
     <div className="flex flex-col items-center text-center gap-8 py-20 px-4">
       <div className="inline-flex items-center gap-2 bg-white/60 px-4 py-2 rounded-full border border-white/80 shadow-sm text-sm text-emerald-600 font-bold">
-        <Sparkles size={16} /> AI-Powered Mindfulness
+        <Sparkles size={16} /> Let AI plan 
       </div>
 
       <h1 className="text-6xl font-bold text-slate-800 leading-tight max-w-3xl">
@@ -16,7 +16,7 @@ export default function HeroSection() {
 
       <p className="text-slate-500 text-lg max-w-2xl">
         Turn your to-do list into a living garden. Describe your day to our AI,
-        complete your tasks, and watch your digital meadow flourish with every
+        complete your tasks, and watch your digital garden flourish with every
         step you take.
       </p>
 

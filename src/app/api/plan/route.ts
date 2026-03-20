@@ -53,22 +53,25 @@ export async function POST(req: NextRequest) {
       "Total tasks should be around 9-12.",
     ].join("\n");
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model,
+          temperature: 0.7,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: prompt },
+          ],
+        }),
       },
-      signal: controller.signal,
-      body: JSON.stringify({
-        model,
-        temperature: 0.7,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: prompt },
-        ],
-      }),
-    });
+    );
 
     if (!response.ok) {
       return Response.json(
@@ -100,7 +103,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ plan: fallback, source: "fallback" });
     }
 
-    return Response.json({ plan: parsed, source: "openai" });
+    return Response.json({ plan: parsed, source: "groq" });
   } catch (e) {
     const fallback = getFallbackPlan(prompt);
     return Response.json({ plan: fallback, source: "fallback", warning: String(e) });

@@ -44,8 +44,6 @@ export function parsePlanAIResponse(raw: unknown): PlanAIResponse | null {
 
   if (sections.length === 0) return null;
 
-  // Keep the experience “game-like”: small list, not an essay.
-  // Target: ~9-12 tasks; we’ll hard-cap at 12.
   const MAX_TASKS = 12;
   const totalTasks = sections.reduce((acc, s) => acc + s.tasks.length, 0);
   if (totalTasks > MAX_TASKS) {
@@ -59,7 +57,6 @@ export function parsePlanAIResponse(raw: unknown): PlanAIResponse | null {
       sections[i] = { ...sections[i], tasks: sections[i].tasks.slice(0, sliceCount) };
       remaining -= sliceCount;
     }
-    // Remove any empty sections caused by trimming.
     const cleaned = sections.filter((s) => s.tasks.length > 0);
     return { motivationalLine, sections: cleaned };
   }

@@ -15,7 +15,6 @@ export default function RootError({
   useEffect(() => {
     const maybe = (error?.message || "").toString();
     if (maybe) setMessage(maybe);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

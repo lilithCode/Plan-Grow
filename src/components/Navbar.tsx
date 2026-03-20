@@ -1,13 +1,8 @@
-/* src/components/Navbar.tsx */
 "use client";
 import { Volume2, Settings, Sprout, VolumeX } from "lucide-react";
 import Link from "next/link";
 
-export default function Navbar({
-  soundEnabled,
-  toggleSound,
-  onSettingsClick,
-}: any) {
+export default function Navbar({ soundEnabled, toggleSound }: any) {
   return (
     <nav className="relative z-20 w-full px-8 py-6 flex items-center justify-between">
       <Link href="/" className="flex items-center gap-3 group">
@@ -38,10 +33,7 @@ export default function Navbar({
         >
           {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
         </button>
-        <button
-          onClick={onSettingsClick}
-          className="p-2 text-slate-400 hover:text-slate-600 transition-all hover:rotate-45"
-        >
+        <button className="p-2 text-slate-400 hover:text-slate-600 transition-all">
           <Settings size={18} />
         </button>
       </div>

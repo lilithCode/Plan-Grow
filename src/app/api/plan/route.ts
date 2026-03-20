@@ -26,12 +26,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Production: set OPENAI_API_KEY in your environment.
   const apiKey = process.env.OPENAI_API_KEY;
   const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
   if (!apiKey) {
-    // No key in env -> still works with a deterministic fallback.
     const fallback = getFallbackPlan(prompt);
     return Response.json({ plan: fallback, source: "fallback" });
   }

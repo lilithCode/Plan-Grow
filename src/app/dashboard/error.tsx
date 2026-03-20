@@ -13,10 +13,8 @@ export default function DashboardError({
   const [message, setMessage] = useState("Something went wrong while planning your day.");
 
   useEffect(() => {
-    // Keep it friendly; still surface a tiny bit for debugging if needed.
     const maybe = (error?.message || "").toString();
     if (maybe) setMessage(maybe.length > 120 ? message : maybe);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

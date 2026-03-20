@@ -1,4 +1,3 @@
-/* src/components/HeroSection.tsx */
 "use client";
 import Link from "next/link";
 import { Sparkles, Zap, Leaf, Volume2 } from "lucide-react";

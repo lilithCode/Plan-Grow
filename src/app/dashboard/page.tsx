@@ -5,7 +5,9 @@ import PlannerInputPanel from "@/components/PlannerInputPanel";
 import TaskCard from "@/components/TaskCard";
 import Garden from "@/components/Garden/Garden";
 import ParticlesBackground from "@/components/ParticlesBackground";
+import SettingsModal from "@/components/SettingsModal";
 import { useSound } from "@/components/useSound";
+import { useApp } from "@/context/AppContext";
 import {
   readLocalStorageJSON,
   writeLocalStorageJSON,
@@ -14,27 +16,22 @@ import {
 import { getFallbackPlan } from "@/lib/planner";
 
 export default function DashboardPage() {
-  const [mounted, setMounted] = useState(false);
+  const { settings, setSettings, mounted } = useApp();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
-  const [settings, setSettings] = useState<{
-    soundEnabled: boolean;
-    ambientMode: "none" | "birds" | "rain";
-  }>({
-    soundEnabled: true,
-    ambientMode: "none",
-  });
   const [plan, setPlan] = useState<any>(null);
   const [isPlanning, setIsPlanning] = useState(false);
 
   const { playClick, playWin } = useSound(settings);
 
   useEffect(() => {
-    setMounted(true);
-const saved = readLocalStorageJSON<any>("pfg_plan_v2");    if (saved) {
-      setPlan(saved);
-      setPrompt(saved.prompt || "");
+    if (!mounted) return;
+    const savedPlan = readLocalStorageJSON<any>("pfg_plan_v2");
+    if (savedPlan) {
+      setPlan(savedPlan);
+      setPrompt(savedPlan.prompt || "");
     }
-  }, []);
+  }, [mounted]);
 
   const tasks =
     plan?.sections?.flatMap((s: any) =>
@@ -56,7 +53,6 @@ const saved = readLocalStorageJSON<any>("pfg_plan_v2");    if (saved) {
         body: JSON.stringify({ prompt }),
       });
       const data = await res.json();
-
       const newPlan = {
         ...data.plan,
         prompt,
@@ -73,19 +69,7 @@ const saved = readLocalStorageJSON<any>("pfg_plan_v2");    if (saved) {
       writeLocalStorageJSON("pfg_plan_v2", newPlan);
     } catch (e) {
       const fallback = getFallbackPlan(prompt);
-      const mappedFallback = {
-        ...fallback,
-        prompt,
-        sections: fallback.sections.map((s: any) => ({
-          ...s,
-          tasks: s.tasks.map((tText: string, idx: number) => ({
-            id: `fallback-${s.timeOfDay}-${idx}`,
-            text: tText,
-            completed: false,
-          })),
-        })),
-      };
-      setPlan(mappedFallback);
+      setPlan(fallback);
     } finally {
       setIsPlanning(false);
     }
@@ -117,16 +101,11 @@ const saved = readLocalStorageJSON<any>("pfg_plan_v2");    if (saved) {
   if (!mounted) return null;
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen transition-colors duration-500 bg-app-background">
       <ParticlesBackground />
-      <Navbar
-        soundEnabled={settings.soundEnabled}
-        toggleSound={() =>
-          setSettings((s) => ({ ...s, soundEnabled: !s.soundEnabled }))
-        }
-      />
+      <Navbar onOpenSettings={() => setIsSettingsOpen(true)} />
 
-      <main className="relative z-10 mx-auto max-w-6xl px-8 py-4 grid lg:grid-cols-[1.1fr_0.9fr] gap-8 animate-bloom">
+      <main className="relative z-10 mx-auto max-w-7xl px-8 py-4 grid lg:grid-cols-[1fr_1.2fr] gap-10 animate-bloom">
         <div className="flex flex-col gap-8">
           <PlannerInputPanel
             prompt={prompt}
@@ -140,27 +119,34 @@ const saved = readLocalStorageJSON<any>("pfg_plan_v2");    if (saved) {
             {tasks.map((t: any) => (
               <TaskCard key={t.id} {...t} onToggle={() => onToggleTask(t.id)} />
             ))}
+            {tasks.length === 0 && !isPlanning && (
+              <div className="text-center py-20 opacity-40">
+                <p className="text-lg font-medium dark:text-slate-400">
+                  Your tasks will appear here...
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 h-full">
           <Garden completedCount={completedCount} completedAll={completedAll} />
 
           <div className="glass-panel rounded-4xl p-6 space-y-4">
-            <h5 className="font-bold text-slate-500 text-xs uppercase tracking-widest">
+            <h5 className="font-bold text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest">
               Ambient Scapes
             </h5>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {(["none", "birds", "rain"] as const).map((mode) => (
                 <button
                   key={mode}
                   onClick={() =>
-                    setSettings((s) => ({ ...s, ambientMode: mode }))
+                    setSettings((s: any) => ({ ...s, ambientMode: mode }))
                   }
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     settings.ambientMode === mode
-                      ? "bg-sky-400 text-white shadow-md"
-                      : "bg-white/50 text-slate-400 hover:bg-white"
+                      ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
+                      : "bg-white/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700"
                   }`}
                 >
                   {mode === "none"
@@ -172,6 +158,14 @@ const saved = readLocalStorageJSON<any>("pfg_plan_v2");    if (saved) {
           </div>
         </div>
       </main>
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={settings}
+        setSettings={setSettings}
+        onResetDay={resetDay}
+      />
     </div>
   );
 }
